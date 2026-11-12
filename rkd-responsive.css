@@ -1,0 +1,1800 @@
+/* ============================================================
+   RKD RESPONSIVE LAYOUT + PLAYLIST ACTIONS
+   Replaces the earlier rkd-responsive.css contents.
+   ============================================================ */
+
+/* Playlist list spacing */
+#playlistContainer,
+#playlist-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 10px 8px;
+    min-width: 0;
+}
+
+.user-playlist {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    margin: 0 !important;
+    box-sizing: border-box;
+}
+
+.user-playlist .pl-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 7px 8px;
+}
+
+.user-playlist .pl-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.playlist-menu-wrap { position: relative; flex: 0 0 30px; margin-left: auto; }
+.playlist-menu-trigger {
+    width: 30px; height: 30px; display: inline-flex;
+    align-items: center; justify-content: center;
+    border: 0; border-radius: 50%; background: transparent;
+    color: #ddd; font-size: 23px; line-height: 1; cursor: pointer;
+}
+.playlist-menu-trigger:hover,
+.playlist-menu-trigger:focus-visible { background: rgba(255,255,255,.12); color: #fff; outline: none; }
+.playlist-context-menu {
+    position: absolute; top: calc(100% + 6px); right: 0; z-index: 51000;
+    width: 190px; padding: 6px; border: 1px solid rgba(255,255,255,.14);
+    border-radius: 10px; background: #252525; box-shadow: 0 12px 30px rgba(0,0,0,.45);
+}
+.playlist-context-menu button {
+    display: block; width: 100%; padding: 10px 11px; border: 0;
+    border-radius: 6px; background: transparent; color: #f2f2f2;
+    text-align: left; font: inherit; cursor: pointer;
+}
+.playlist-context-menu button:hover { background: rgba(255,255,255,.1); }
+.playlist-context-menu button.danger { color: #ff7777; }
+
+/* Add-to-playlist popup */
+.rkd-action-menu {
+    position: fixed;
+    z-index: 50000;
+    width: min(260px, calc(100vw - 16px));
+    max-height: min(360px, calc(100vh - 20px));
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 9px;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 12px;
+    background: #202020;
+    color: #fff;
+    box-shadow: 0 14px 40px rgba(0,0,0,.5);
+}
+
+.rkd-action-menu-heading {
+    padding: 8px 9px 10px;
+    color: #bdbdbd;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.rkd-action-menu button {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 10px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #f4f4f4;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+}
+
+.rkd-action-menu button:hover,
+.rkd-action-menu button:focus-visible {
+    background: rgba(255,255,255,.12);
+    outline: none;
+}
+
+.rkd-action-menu .rkd-action-menu-create {
+    font-weight: 700;
+}
+
+.rkd-action-menu-divider {
+    height: 1px;
+    margin: 5px 2px;
+    background: rgba(255,255,255,.14);
+}
+
+.rkd-action-menu-empty {
+    padding: 12px 10px;
+    color: #aaa;
+    font-size: 13px;
+}
+
+/* Toast */
+#rkd-toast {
+    position: fixed;
+    z-index: 60000;
+    left: 50%;
+    bottom: 105px;
+    transform: translate(-50%, 8px);
+    max-width: calc(100vw - 28px);
+    box-sizing: border-box;
+    padding: 10px 16px;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 999px;
+    background: #292929;
+    color: #fff;
+    font-size: 13px;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+}
+
+#rkd-toast.visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* Use the existing video-panel dots. No duplicate floating button. */
+.container3 .more-button {
+    position: relative;
+    z-index: 30;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    opacity: 1 !important;
+    visibility: visible !important;
+    cursor: pointer;
+    border-radius: 50%;
+    background: rgba(0,0,0,.35);
+    color: #fff;
+}
+
+#rkd-player-more,
+.rkd-video-more {
+    display: none !important;
+}
+
+/* Keep video contained within its panel */
+.container3,
+.video-bg {
+    min-width: 0;
+    min-height: 0;
+}
+
+.video-bg {
+    position: relative;
+    overflow: hidden;
+}
+
+.video-bg video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+/* Desktop layout: library | songs | now playing */
+html,
+body {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+.container {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
+.left-wrapper {
+    display: flex;
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
+.container1 {
+    flex: 0 0 clamp(190px, 22vw, 310px);
+    width: auto;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.container2 {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    transition:
+    flex-basis 0.65s cubic-bezier(.22, 1, .36, 1),
+    width 0.65s cubic-bezier(.22, 1, .36, 1);
+}
+
+.container3 {
+    flex: 0 0 clamp(230px, 20vw, 360px);
+    width: clamp(230px, 20vw, 360px);
+    min-width: 0;
+    max-width: 360px;
+    box-sizing: border-box;
+    overflow: hidden;
+    transition:
+    flex-basis 0.65s cubic-bezier(.22, 1, .36, 1),
+    width 0.65s cubic-bezier(.22, 1, .36, 1),
+    min-width 0.65s cubic-bezier(.22, 1, .36, 1),
+    opacity 0.3s ease;
+}
+
+/* NOW PLAYING: COLLAPSED STATE */
+.container3.shrinked {
+    flex: 0 0 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Song cards should keep consistent spacing without forcing page overflow */
+.songbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 10px 14px;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+}
+/* Hide horizontal scrollbar while preserving horizontal scrolling */
+#search-overlay,
+#playlist-overlay,
+.search-overlay {
+    scrollbar-width: none;
+}
+
+#search-overlay::-webkit-scrollbar:horizontal,
+#playlist-overlay::-webkit-scrollbar:horizontal,
+.search-overlay::-webkit-scrollbar:horizontal {
+    display: none;
+    height: 0;
+}
+.songbox {
+    scrollbar-width: none;
+}
+
+.songbox::-webkit-scrollbar:horizontal {
+    display: none;
+    height: 0;
+}
+
+.songs {
+    flex: 0 0 auto;
+    min-width: 0;
+    margin: 0 !important;
+    box-sizing: border-box;
+}
+
+.songs img {
+    display: block;
+    max-width: 100%;
+    object-fit: cover;
+}
+
+/* Player desktop sizing */
+.player {
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.player .meta,
+.player .seek-wrap,
+.player .controls {
+    min-width: 0;
+}
+
+.player .meta {
+    flex: 0 1 25%;
+}
+
+.player .seek-wrap {
+    flex: 1 1 35%;
+    min-width: 140px;
+}
+
+.player .controls {
+    flex: 0 1 30%;
+}
+
+/* Tablet: stack right panel below the library and song browser */
+@media (max-width: 1050px) {
+    .container {
+        flex-wrap: wrap;
+    }
+
+    .left-wrapper {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    .container1 {
+        flex-basis: clamp(180px, 27vw, 280px);
+    }
+
+    .container3 {
+        flex: 1 1 100%;
+        width: 100%;
+        height: auto;
+        min-height: 420px;
+    }
+
+    .container3 .video-bg {
+        min-height: 390px;
+    }
+
+    .container3 .mid {
+        display: grid;
+    }
+
+    /* Disable fixed expansion behavior at tablet sizes */
+    .container1.expanded,
+    .container3.expanded {
+        position: relative !important;
+        inset: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        z-index: 2 !important;
+    }
+    .container3.shrinked {
+    display: none !important;
+}
+
+    .container3.expanded .video-bg {
+        position: relative !important;
+        width: 100% !important;
+        height: 390px !important;
+        top: auto !important;
+    }
+
+    .player {
+        height: auto;
+        min-height: 120px;
+        padding: 12px 16px;
+        gap: 12px;
+    }
+}
+
+
+
+/* Very narrow phones */
+@media (max-width: 380px) {
+    .list ul {
+        gap: 6px 10px;
+        font-size: 12px;
+    }
+
+    .container2 h2 {
+        font-size: 20px;
+    }
+
+    .player {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .player .buttons {
+        gap: 2px;
+    }
+
+    .player .icon-btn {
+        padding: 5px;
+    }
+}
+
+/* Respect reduced-motion settings */
+@media (prefers-reduced-motion: reduce) {
+    .rkd-action-menu,
+    #rkd-toast,
+    .rkd-delete-playlist {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* =========================================
+   RKD LIBRARY EXPAND / COLLAPSE FIX
+========================================= */
+
+.container1 {
+    flex: 0 0 clamp(190px, 22vw, 310px);
+    transition:
+        flex-basis 0.65s cubic-bezier(.22, 1, .36, 1),
+        width 0.65s cubic-bezier(.22, 1, .36, 1),
+        min-width 0.65s cubic-bezier(.22, 1, .36, 1);
+    overflow-x: hidden;
+}
+
+.container1.shrinked {
+    flex-grow: 0 !important;
+    flex-shrink: 0 !important;
+    flex-basis: 64px !important;
+    width: 64px !important;
+    min-width: 64px !important;
+    overflow: hidden;
+}
+
+.container1.shrinked .shrink-button {
+    left: 14px;
+    top: 8px;
+    transform: none;
+}
+
+.container1:not(.shrinked) {
+    overflow-y: auto;
+}
+
+.container1.expanded {
+    position: fixed !important;
+    top: 76px !important;
+    left: 8px !important;
+    width: min(79.4vw, 1200px) !important;
+    max-width: 80vw !important;
+    height: 73.7vh !important;
+    flex: none !important;
+    z-index: 13000 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+@media (max-width: 700px) {
+    .container1 {
+        flex: 0 0 auto;
+        width: 100% !important;
+    }
+
+    .container1.shrinked {
+        flex: 0 0 64px !important;
+        width: 64px !important;
+        min-width: 64px !important;
+    }
+
+    .container1.expanded {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .container1 {
+        transition: none !important;
+    }
+}
+
+#panel1.shrinked .sec1 {
+    width: 64px;
+    justify-content: center;
+    padding: 8px 0;
+}
+
+#panel1.shrinked .shrink-button {
+    margin: 0 auto;
+}
+
+#panel1.shrinked .sec1 h3 {
+    display: none !important;
+}
+
+#panel1 .shrink-button:hover {
+    background: #383838;
+    border-radius: 8px;
+}
+
+/* =========================================
+   RKD CONSOLIDATED UI FIXES
+========================================= */
+
+/* ---------- NOW PLAYING: NO VIDEO ---------- */
+
+.container3 .video-bg {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            circle at 50% 25%,
+            rgba(130, 70, 110, .32),
+            transparent 65%
+        ),
+        linear-gradient(145deg, #24202b, #101014 75%);
+}
+
+.container3 .video-bg video,
+.container3 .video-bg .bg-video {
+    display: none !important;
+}
+
+.container3 .cover-backdrop {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0,0,0,.12),
+            rgba(0,0,0,.72)
+        );
+    pointer-events: none;
+}
+
+.container3 .expanded-cover {
+    position: relative;
+    display: block;
+    width: min(70%, 260px);
+    aspect-ratio: 1;
+    height: auto;
+    margin: 35px auto;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 15px 45px rgba(0,0,0,.45);
+}
+
+/* ---------- THREE-DOT BUTTON ---------- */
+
+.container3 .more-button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    color: #fff !important;
+    background: transparent;
+    border: none;
+    opacity: 1 !important;
+    visibility: visible !important;
+    cursor: pointer;
+}
+
+.container3 .more-button svg {
+    fill: #fff !important;
+    color: #fff !important;
+    filter: none !important;
+}
+
+.container3 .more-button:hover {
+    background: rgba(255,255,255,.12);
+    border-radius: 50%;
+}
+
+/* ---------- TOOLTIP CLEANUP ---------- */
+
+.showup::after {
+    pointer-events: none;
+}
+
+.showup:hover::after {
+    z-index: 50000;
+}
+
+button[data-tooltip=""]::after,
+button:not([data-tooltip])::after {
+    display: none !important;
+}
+
+/* ---------- LIBRARY COLLAPSE ICON ---------- */
+
+#panel1.shrinked .sec1 {
+    justify-content: center;
+    gap: 0;
+}
+
+#panel1.shrinked .sec1 h3 {
+    display: none !important;
+}
+
+/* ---------- SEARCH OVERLAY ---------- */
+
+.search-overlay {
+    box-sizing: border-box;
+    margin: 0 !important;
+    padding: 0;
+    border: 0;
+    overflow-x: hidden;
+    isolation: isolate;
+}
+
+.search-overlay.active {
+    display: flex !important;
+    opacity: 1;
+    pointer-events: auto;
+}
+.search-overlay {
+    transition:
+        left 0.65s cubic-bezier(.22, 1, .36, 1),
+        width 0.65s cubic-bezier(.22, 1, .36, 1),
+        opacity 0.25s ease-in-out;
+    will-change: left, width;
+}
+/* ---------- RESPONSIVE FIXES ---------- */
+
+.container,
+.left-wrapper,
+.container1,
+.container2,
+.container3 {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+@media (max-width: 1050px) {
+    .container {
+        gap: 12px;
+    }
+
+    .container3 {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 700px) {
+    .container {
+        overflow-x: hidden;
+    }
+
+    .container1,
+    .container2,
+    .container3 {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .container3 .expanded-cover {
+        width: min(65%, 210px);
+        margin: 20px auto;
+    }
+
+    .search-overlay {
+        top: 76px;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: calc(100dvh - 246px);
+    }
+}
+
+/* ---------- REDUCED MOTION ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+
+/* =========================================
+   RKD RIGHT PANEL: NOW PLAYING LAYOUT FIX
+   ========================================= */
+
+/* Main panel */
+#panel2 {
+    display: flex;
+    flex-direction: column;
+    height: 73.7vh;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+/* Artwork area */
+#panel2 > .video-bg {
+    position: relative;
+    flex: 0 0 390px;
+    width: 100%;
+    height: 390px;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+    isolation: isolate;
+}
+
+/* Background */
+#panel2 .cover-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.75)),
+        radial-gradient(circle at 50% 25%, #493044, #151419 75%);
+}
+
+/* Song artwork */
+#panel2 .expanded-cover {
+    display: block !important;
+    position: absolute;
+    top: 72px;
+    left: 50%;
+    width: min(62%, 220px);
+    height: auto;
+    aspect-ratio: 1 / 1;
+    margin: 0;
+    transform: translateX(-50%);
+    object-fit: cover;
+    border-radius: 12px;
+    opacity: 1;
+    z-index: 5;
+    box-shadow: 0 12px 35px rgba(0,0,0,.4);
+}
+
+/* Header: playlist name and controls */
+#panel2 > .video-bg > .top1 {
+    position: absolute;
+    top: 12px;
+    left: 14px;
+    right: 14px;
+    z-index: 20;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: auto;
+    margin: 0;
+    padding: 0;
+}
+
+/* Left side of header */
+#panel2 .top1 .sec1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+#panel2 .top1 .sec1 h3 {
+    margin: 0;
+    color: white;
+    font-size: 18px;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Right side controls */
+#panel2 .top1 .sec2 {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    position: relative;
+    flex: 0 0 auto;
+}
+
+/* Prevent old absolute SVG positioning */
+#panel2 .top1 .sec2 button {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0,0,0,.2);
+    color: white;
+    cursor: pointer;
+    opacity: 1 !important;
+}
+
+#panel2 .top1 .sec2 button svg {
+    position: static !important;
+    width: 22px;
+    height: 22px;
+    opacity: 1 !important;
+    transform: none !important;
+    fill: currentColor;
+}
+
+#panel2 .top1 .sec2 button:hover {
+    background: rgba(255,255,255,.15);
+}
+
+/* Song and artist information below artwork */
+#panel2 > .mid {
+    position: relative;
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    overflow-y: auto;
+    padding: 14px 18px 20px;
+    box-sizing: border-box;
+    border-radius: 0 0 8px 8px;
+}
+
+#panel2 > .mid h2 {
+    margin: 0 0 5px;
+    color: white;
+    font-size: 25px;
+    line-height: 1.2;
+}
+
+#panel2 > .mid h4 {
+    margin: 0 0 12px;
+    color: #b3b3b3;
+    font-size: 16px;
+}
+
+/* Expanded panel */
+#panel2.expanded {
+    position: fixed !important;
+    top: 76px !important;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 100px !important;
+
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+
+    z-index: 14000 !important;
+    overflow: hidden !important;
+    border-radius: 10px;
+    background: #111;
+}
+
+#panel2.expanded > .video-bg {
+    position: relative !important;
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0;
+    border-radius: 10px;
+}
+
+#panel2.expanded .expanded-cover {
+    top: 75px;
+    width: clamp(200px, 25vw, 300px);
+}
+
+#panel2.expanded > .mid {
+    display: none !important;
+}
+
+/* Tablet and mobile retain normal document flow */
+@media (max-width: 1050px) {
+    #panel2 {
+        height: auto;
+        min-height: 420px;
+    }
+
+    #panel2 > .video-bg {
+        flex-basis: 300px;
+        height: 300px;
+    }
+
+    #panel2 .expanded-cover {
+        width: min(55%, 190px);
+        top: 65px;
+    }
+
+    #panel2.expanded {
+        position: relative !important;
+        inset: auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 420px;
+    }
+
+    #panel2.expanded > .video-bg {
+        flex: 0 0 300px !important;
+        height: 300px !important;
+    }
+}
+
+
+/* FIX: RIGHT PANEL ARTWORK CENTERING */
+#panel2 .video-bg #expandedCover {
+    position: absolute !important;
+    left: 50% !important;
+    top: 72px !important;
+    right: auto !important;
+    margin: 0 !important;
+
+    width: clamp(200px, 25vw, 300px) !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1;
+
+    object-fit: cover;
+    object-position: center;
+
+    transform: translateX(-50%) !important;
+}
+
+/* Keep artwork centered in expanded mode */
+#panel2.expanded .video-bg #expandedCover {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
+
+/* Keep artwork centered in normal mode */
+#panel2:not(.expanded) .video-bg #expandedCover {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
+
+
+
+/* =====================================================
+   RKD FINAL PATCH: LIBRARY + PLAYLIST LAYOUT
+   ===================================================== */
+
+/* Library collapse animation */
+#panel1 {
+    transition:
+        flex-basis .65s cubic-bezier(.22, 1, .36, 1),
+        width .65s cubic-bezier(.22, 1, .36, 1),
+        min-width .65s cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+/* Hide incorrectly positioned custom tooltip */
+#panel1 #shrinkBtn1::after {
+    display: none !important;
+}
+
+/* ------------------------------
+   EXPANDED LIBRARY
+   ------------------------------ */
+
+#panel1:not(.shrinked) > .top1 > .sec1 {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 52px !important;
+}
+
+#panel1:not(.shrinked) #shrinkBtn1 {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    margin: 0 12px 0 0 !important;
+}
+
+/* Playlist header: fixed right-side menu alignment */
+#panel1:not(.shrinked) .user-playlist .pl-header {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    gap: 10px !important;
+}
+
+#panel1:not(.shrinked) .user-playlist .pl-name {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+#panel1:not(.shrinked) .user-playlist .playlist-menu-wrap {
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    margin-left: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#panel1:not(.shrinked) .user-playlist .playlist-menu-trigger {
+    width: 36px !important;
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* ------------------------------
+   COLLAPSED LIBRARY
+   ------------------------------ */
+
+#panel1.shrinked > .top1 {
+    width: 64px !important;
+    min-width: 64px !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    box-sizing: border-box !important;
+}
+
+#panel1.shrinked > .top1 > .sec1 {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 64px !important;
+    min-width: 64px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    box-sizing: border-box !important;
+}
+
+#panel1.shrinked #shrinkBtn1 {
+    position: absolute !important;
+    left: 14px !important;
+    right: auto !important;
+    top: 8px !important;
+    bottom: auto !important;
+    transform: none !important;
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 20 !important;
+}
+
+#panel1.shrinked #shrinkBtn1 svg {
+    width: 24px !important;
+    height: 24px !important;
+    transform: scaleX(-1) !important;
+}
+
+/* Collapsed playlist artwork */
+#panel1.shrinked #playlistContainer,
+#panel1.shrinked #playlist-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 64px !important;
+    padding: 10px 0 !important;
+    overflow: visible !important;
+}
+
+#panel1.shrinked .user-playlist {
+    position: relative !important;
+    display: block !important;
+    width: 64px !important;
+    height: 64px !important;
+    min-width: 64px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    left: auto !important;
+    top: auto !important;
+    overflow: visible !important;
+}
+
+#panel1.shrinked .user-playlist .pl-header {
+    display: flex !important;
+    width: 64px !important;
+    height: 64px !important;
+    min-width: 64px !important;
+    padding: 7px !important;
+    margin: 0 !important;
+    justify-content: center !important;
+    gap: 0 !important;
+}
+
+#panel1.shrinked .user-playlist .pl-cover {
+    flex: 0 0 50px !important;
+    width: 50px !important;
+    height: 50px !important;
+}
+
+/* Hide names, ellipsis and playlist contents when collapsed */
+#panel1.shrinked .user-playlist .pl-name,
+#panel1.shrinked .user-playlist .playlist-menu-wrap,
+#panel1.shrinked .user-playlist .playlist-context-menu,
+#panel1.shrinked .user-playlist .playlist-songs {
+    display: none !important;
+}
+
+/* Menu portal positioning */
+body > .playlist-context-menu {
+    position: fixed !important;
+    z-index: 51000 !important;
+    width: 190px;
+    max-width: calc(100vw - 16px);
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.playlist-context-menu[hidden] {
+    display: none !important;
+}
+
+
+/* RKD FIX: Anchor all playlist menus to the full playlist card */
+
+#panel1:not(.shrinked) .user-playlist {
+    position: relative !important;
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+#panel1:not(.shrinked) .user-playlist .pl-header {
+    position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding-right: 48px !important;
+    box-sizing: border-box !important;
+}
+
+#panel1:not(.shrinked) .user-playlist .playlist-menu-wrap {
+    position: absolute !important;
+    top: 7px !important;
+    right: 8px !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin: 0 !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+}
+
+
+/* =====================================================
+   RKD MOBILE RESPONSIVE FOUNDATION
+   ===================================================== */
+
+#rkd-mobile-nav {
+    display: none;
+}
+
+@media (max-width: 700px) {
+
+    html,
+    body {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        overscroll-behavior: none;
+    }
+
+    body {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        background: #000 !important;
+        color: #fff;
+        --rkd-mobile-player-height: 70px;
+        --rkd-mobile-nav-height: 58px;
+    }
+
+    /* Header */
+    header {
+        position: relative !important;
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        z-index: 100 !important;
+    }
+
+    nav.outer {
+        display: grid !important;
+        grid-template-columns: auto minmax(0, 1fr) !important;
+        align-items: center !important;
+        gap: 8px 10px !important;
+        width: 100% !important;
+        padding: 8px 12px !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .nav {
+        font-size: 36px !important;
+        line-height: 1 !important;
+        margin: 0 !important;
+    }
+
+    .serch {
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 38px !important;
+        margin: 0 !important;
+    }
+
+    .list {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        overflow-x: auto !important;
+        scrollbar-width: none;
+    }
+
+    .list::-webkit-scrollbar {
+        display: none;
+    }
+
+    .list ul {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        gap: 16px !important;
+        width: max-content !important;
+        white-space: nowrap !important;
+        font-size: 12px !important;
+    }
+
+    /* Main content viewport */
+    .container {
+        display: block !important;
+        position: relative !important;
+        flex: 1 1 auto !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        height: auto !important;
+        padding: 0 0 calc(
+            var(--rkd-mobile-player-height) +
+            var(--rkd-mobile-nav-height) +
+            env(safe-area-inset-bottom)
+        ) !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Let the existing three panels become direct layout items */
+    .left-wrapper {
+        display: contents !important;
+    }
+
+    #panel1,
+    .container2,
+    #panel2 {
+        display: none !important;
+        position: absolute !important;
+            inset: 0 0 calc(
+        var(--rkd-mobile-player-height) +
+        var(--rkd-mobile-nav-height) +
+        env(safe-area-inset-bottom)
+    ) 0 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        box-sizing: border-box !important;
+    }
+
+    /* HOME VIEW */
+    body.rkd-mobile-view-home .container2 {
+        display: block !important;
+        background: linear-gradient(180deg, #242424, #080808) !important;
+        padding: 12px 12px 20px !important;
+    }
+
+    /* LIBRARY VIEW */
+    body.rkd-mobile-view-library #panel1 {
+        display: block !important;
+        background: #1e1e1e !important;
+        padding: 10px 10px 20px !important;
+    }
+
+    body.rkd-mobile-view-library #panel1 .top1 {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+        padding: 4px 2px 12px !important;
+    }
+
+    body.rkd-mobile-view-library #panel1 .sec1 {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    body.rkd-mobile-view-library #panel1 .sec1 h3 {
+        display: block !important;
+        transform: none !important;
+        margin: 0 !important;
+        font-size: 19px !important;
+    }
+
+    body.rkd-mobile-view-library #panel1 #shrinkBtn1,
+    body.rkd-mobile-view-library #panel1 #expandBtn1 {
+        display: none !important;
+    }
+
+    body.rkd-mobile-view-library #panel1 .create-button {
+        width: auto !important;
+        height: 36px !important;
+        padding: 0 14px !important;
+        font-size: 14px !important;
+        transform: none !important;
+    }
+
+    body.rkd-mobile-view-library #panel1 .search-btn {
+        display: inline-flex !important;
+        margin: 4px 0 12px !important;
+    }
+
+    body.rkd-mobile-view-library #panel1 #playlistContainer {
+        width: 100% !important;
+        max-height: none !important;
+        overflow: visible !important;
+        padding: 4px 0 !important;
+    }
+
+    body.rkd-mobile-view-library #panel1 .user-playlist {
+        width: 100% !important;
+        min-height: 66px !important;
+    }
+
+    body.rkd-mobile-view-library #panel1 .user-playlist .pl-header {
+        min-height: 64px !important;
+    }
+
+    /* PLAYER VIEW */
+    body.rkd-mobile-view-player #panel2 {
+        display: flex !important;
+        flex-direction: column !important;
+        background: linear-gradient(180deg, #302b32, #101014 75%) !important;
+        padding: 0 0 20px !important;
+    }
+
+    body.rkd-mobile-view-player #panel2 .video-bg {
+        position: relative !important;
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        aspect-ratio: 1 / 1 !important;
+        border-radius: 0 !important;
+    }
+
+    body.rkd-mobile-view-player #panel2 .expanded-cover {
+        top: 50% !important;
+        left: 50% !important;
+        width: min(68vw, 300px) !important;
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
+        transform: translate(-50%, -50%) !important;
+        margin: 0 !important;
+    }
+
+    body.rkd-mobile-view-player #panel2 > .video-bg > .top1 {
+        top: 12px !important;
+        left: 12px !important;
+        right: 12px !important;
+    }
+
+    body.rkd-mobile-view-player #panel2 .mid {
+        display: block !important;
+        width: 100% !important;
+        padding: 16px 18px !important;
+        box-sizing: border-box !important;
+    }
+
+    body.rkd-mobile-view-player #panel2 .mid h2 {
+        font-size: 24px !important;
+        margin: 0 0 6px !important;
+    }
+
+    body.rkd-mobile-view-player #panel2 .mid h4 {
+        font-size: 15px !important;
+        margin: 0 !important;
+        color: #bdbdbd !important;
+    }
+
+    /* Persistent mini player */
+    .player {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: calc(
+            var(--rkd-mobile-nav-height) +
+            env(safe-area-inset-bottom)
+        ) !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        grid-template-areas: "meta controls" !important;
+        align-items: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+        height: var(--rkd-mobile-player-height) !important;
+        min-height: 0 !important;
+        padding: 7px 12px !important;
+        background: #202020 !important;
+        border-top: 1px solid #383838 !important;
+        z-index: 20000 !important;
+        box-sizing: border-box !important;
+    }
+
+    .player .meta {
+        grid-area: meta !important;
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+
+    .player .track {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        min-width: 0 !important;
+    }
+
+    .player .cover {
+        flex: 0 0 46px !important;
+        width: 46px !important;
+        height: 46px !important;
+    }
+
+    .player .info {
+        min-width: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .player .title2,
+    .player .artist2 {
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
+    .player .title2 {
+        font-size: 13px !important;
+    }
+
+    .player .artist2 {
+        font-size: 11px !important;
+    }
+
+    .player .seek-wrap,
+    .player .extra {
+        display: none !important;
+    }
+
+    .player .controls {
+        grid-area: controls !important;
+        width: auto !important;
+        min-width: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .player .buttons {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        gap: 8px !important;
+    }
+
+    .player .buttons .icon-btn {
+        display: none !important;
+    }
+
+    .player .buttons #prev,
+    .player .buttons #next {
+        display: inline-flex !important;
+    }
+
+    .player .buttons .play {
+        width: 42px !important;
+        height: 42px !important;
+        flex: 0 0 42px !important;
+    }
+
+    /* Bottom navigation */
+    #rkd-mobile-nav {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        align-items: center !important;
+        height: calc(
+            var(--rkd-mobile-nav-height) +
+            env(safe-area-inset-bottom)
+        ) !important;
+        padding: 4px 8px env(safe-area-inset-bottom) !important;
+        background: #101010 !important;
+        border-top: 1px solid #292929 !important;
+        z-index: 20001 !important;
+        box-sizing: border-box !important;
+    }
+
+    #rkd-mobile-nav button {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 3px !important;
+        height: 100% !important;
+        border: 0 !important;
+        background: transparent !important;
+        color: #aaa !important;
+        font-size: 11px !important;
+        cursor: pointer !important;
+    }
+
+    #rkd-mobile-nav button.active {
+        color: #fff !important;
+    }
+
+    #rkd-mobile-nav .rkd-mobile-nav-icon {
+        font-size: 22px !important;
+        line-height: 1 !important;
+    }
+
+    /* Search and playlist overlays */
+    #search-overlay,
+    #playlist-overlay {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        z-index: 30000 !important;
+        overflow-y: auto !important;
+        border-radius: 0 !important;
+    }
+
+    #search-overlay .search-overlay-inner,
+    #playlist-overlay .overlay-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Touch-friendly controls */
+    button,
+    input,
+    .playlist-menu-trigger {
+        touch-action: manipulation;
+    }
+
+    .playlist-menu-trigger,
+    .search-btn,
+    .create-button {
+        min-height: 40px !important;
+    }
+
+    /* Mobile toast above player and navigation */
+    #rkd-toast {
+        bottom: calc(
+            var(--rkd-mobile-player-height) +
+            var(--rkd-mobile-nav-height) +
+            16px +
+            env(safe-area-inset-bottom)
+        ) !important;
+    }
+}
+
+
+/* RKD: Actual mobile Home card sizing */
+@media (max-width: 700px) {
+
+    body.rkd-mobile-view-home .container2 {
+        padding: 16px 14px 24px !important;
+    }
+
+    body.rkd-mobile-view-home .container2 h2 {
+        font-size: 21px !important;
+        padding-left: 0 !important;
+        margin: 12px 0 16px !important;
+    }
+
+    body.rkd-mobile-view-home .container2 .scroll-wrapper {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    body.rkd-mobile-view-home .container2 .songbox {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 14px !important;
+        width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding: 4px 0 14px !important;
+    }
+
+    body.rkd-mobile-view-home .container2 .songbox > .songs {
+        flex: 0 0 140px !important;
+        width: 140px !important;
+        min-width: 140px !important;
+        max-width: 140px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    body.rkd-mobile-view-home .container2 .songbox > .songs > img {
+        display: block !important;
+        width: 140px !important;
+        height: 140px !important;
+        max-width: 140px !important;
+        object-fit: cover !important;
+        border-radius: 9px !important;
+    }
+
+    body.rkd-mobile-view-home .container2 .songs .songname {
+        width: 140px !important;
+        max-width: 140px !important;
+        font-size: 14px !important;
+        line-height: 1.4 !important;
+        padding: 4px 0 0 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    body.rkd-mobile-view-home .container2 .songs .author {
+        width: 140px !important;
+        max-width: 140px !important;
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    body.rkd-mobile-view-home .container2 .songs .add-btn {
+        width: 30px !important;
+        height: 30px !important;
+        margin-top: 6px !important;
+    }
+
+    body.rkd-mobile-view-home .container2 #artists {
+        flex: 0 0 140px !important;
+        width: 140px !important;
+    }
+
+    body.rkd-mobile-view-home .container2 #artists img {
+        width: 120px !important;
+        height: 120px !important;
+        border-radius: 50% !important;
+        object-fit: cover !important;
+    }
+}
+
+
+/* FIX: Mobile mini-player controls */
+@media (max-width: 700px) {
+
+    .player {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 52px !important;
+        grid-template-areas: "meta controls" !important;
+        align-items: center !important;
+        height: 70px !important;
+        min-height: 70px !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    .player .meta {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        min-width: 0 !important;
+        height: 100% !important;
+        overflow: hidden !important;
+    }
+
+    .player .track {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 100% !important;
+    }
+
+    .player .cover {
+        flex: 0 0 46px !important;
+        width: 46px !important;
+        height: 46px !important;
+    }
+
+    .player .info {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+    }
+
+    .player .controls {
+        grid-area: controls !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 52px !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .player .buttons {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: auto !important;
+        gap: 0 !important;
+    }
+
+    .player .buttons #prev,
+    .player .buttons #next {
+        display: none !important;
+    }
+
+    .player .buttons #play {
+        display: grid !important;
+        width: 42px !important;
+        height: 42px !important;
+        flex: 0 0 42px !important;
+        margin: 0 !important;
+    }
+}
+
+
+

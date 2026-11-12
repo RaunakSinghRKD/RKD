@@ -1,0 +1,18 @@
+# Local secrets and environment
+.env
+.env.*
+!.env.example
+
+# Tooling / generated files
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
+*.log
+
+# User-supplied local media: do not accidentally publish copyrighted files
+*.mp3
+*.mp4

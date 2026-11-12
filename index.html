@@ -1,0 +1,2547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RKD Music</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: black;
+            overflow: hidden;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+
+        .outer {
+            border: 2px solid black;
+            width: 100%;
+            background-color: black;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .nav {
+            color: red;
+            font-size: 55px;
+            justify-self: flex-start;
+
+        }
+
+        .serch {
+            display: flex;
+            align-items: center;
+            width: 350px;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #373737;
+            padding: 0 12px;
+            box-sizing: border-box;
+        }
+
+        .search-icon {
+            color: #b3b3b3;
+            flex-shrink: 0;
+            margin-right: 8px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .search-icon:hover {
+            color: #ffffff;
+        }
+
+        .serch input {
+            flex: 1;
+            height: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #ffffff;
+            font-size: 14px;
+            padding-left: 4px;
+        }
+
+
+        .list {
+            display: flex;
+            justify-self: end
+        }
+
+        .list {
+            margin-left: auto;
+            min-width: 0;
+        }
+
+        .list ul {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+            font-size: 20px;
+            flex-wrap: nowrap;
+            padding: 0;
+            margin: 0;
+        }
+
+        .list ul li {
+            list-style: none;
+            color: rgb(208, 208, 208);
+        }
+
+        .list ul li {
+            display: inline-block;
+            transition: transform 0.1 ease, white 0.1 ease;
+        }
+
+        .list ul li:hover {
+            transform: scale(1.05);
+            color: white
+        }
+
+        @media only screen and (max-width:885px) {
+            .list ul {
+                display: block;
+            }
+
+            .serch {
+                width: 90%;
+            }
+
+        }
+
+        @media only screen and (max-width:413px) {
+            .buttons {
+                flex-direction: column;
+            }
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-evenly;
+            width: 100vw;
+            gap: 0.5vw;
+        }
+
+        .left-wrapper {
+            display: flex;
+            position: relative;
+            /* anchor point for overlay */
+            justify-content: space-evenly;
+            gap: 0.5vw;
+            width: 79vw;
+            /* total width reserved for container1 + container2 */
+            margin: 0;
+            padding: 0;
+            flex: 1;
+        }
+
+        .container1 {
+            width: 22vw;
+            height: 73.7vh;
+            background-color: #1e1e1e;
+            border-radius: 7px;
+            position: relative;
+            cursor: pointer;
+            transition:
+                flex-basis 0.4s cubic-bezier(.22, 1, .36, 1),
+                width 0.4s cubic-bezier(.22, 1, .36, 1),
+                transform 0.4s ease;
+            transform-origin: left;
+            /* expansion always starts from left edge */
+            z-index: 1;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+        .container1::-webkit-scrollbar {
+            display: none;
+            /* Chrome, Safari */
+        }
+
+        .container1.expanded {
+            width: 79.4vw !important;
+            max-width: 80vw !important;
+            position: fixed;
+            /* take it out of parent flow */
+            top: 76px;
+            /* adjust as needed */
+            z-index: 13000;
+            /* keep it above other content */
+            left: 0.1vw;
+        }
+
+        .container.no-right .container1.expanded {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            /* take full space if container3 is gone */
+        }
+
+        .container1 h3 {
+            color: white;
+        }
+
+        .top1 {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            /* vertically align items */
+        }
+
+        .container1 .top1 {
+            gap: 40px;
+        }
+
+        .showup {
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Tooltip */
+        .showup::after {
+            content: attr(data-tooltip);
+            position: fixed;
+            /* Makes it escape container clipping */
+            background: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            font-size: 12px;
+            padding: 5px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, 0) scale(0.9);
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+            z-index: 99999;
+        }
+
+        /* Calculate position using bounding rect of hovered element */
+        .showup:hover::after {
+            opacity: 1;
+            transform: translate(-60%, -30px) scale(1);
+        }
+
+        .create-button {
+            height: 30px;
+            width: 90px;
+            border-radius: 20px;
+            background-color: #373737;
+            color: white;
+            border: none;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .expand-button {
+            border: none;
+            background-color: rgba(255, 222, 173, 0);
+            border-radius: 150px;
+        }
+
+        .sec1 {
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* SVG is hidden by default */
+        .sec1 svg {
+            position: absolute;
+            left: 0;
+            transform: translateX(-30px);
+            /* start off to the left */
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: rotate(0deg);
+        }
+
+        .sec1 svg:hover {
+            filter: brightness(100);
+        }
+
+        .container1.shrinked {
+            width: 5vw !important;
+        }
+
+        .shrink-button {
+            border: none;
+            background-color: transparent;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+            position: absolute;
+        }
+
+        .container1.shrinked .expand-button,
+        .container1.shrinked h3,
+        .container1.shrinked .search-btn {
+            display: none;
+        }
+
+        .container1.expanded .shrink-button {
+            display: none;
+        }
+
+        .container1.expanded:hover .sec1 h3 {
+            transform: none;
+        }
+
+        .container1.shrinked .create-button {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            transform: translateX(-55%);
+            top: 60px;
+            /* slightly closer to top for small bar */
+            width: 34px;
+            height: 34px;
+            background: none;
+            /* center horizontally */
+            font-size: 22px;
+        }
+
+        .container1.shrinked .create-button::after {
+            content: "+";
+        }
+
+        .container1.shrinked .create-button span {
+            display: none;
+        }
+
+        .container1.shrinked .sec1 svg {
+            transform: translateX(0px) !important;
+            /* original off-screen state */
+            opacity: 1 !important;
+            transform: scaleX(-1) !important;
+        }
+
+        .container1.shrinked .shrink-button {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            transform: none;
+            top: auto;
+            width: 36px;
+            height: 36px;
+            background: none;
+        }
+
+        /* just for shrinking */
+        .container2 {
+            flex: 1;
+            /* adjust as before */
+            transition: all 0.4s ease;
+        }
+
+        .container1:hover .sec1 svg,
+        .container3:hover .sec1 svg {
+            transform: translateX(0);
+            /* slide in */
+            opacity: 1;
+        }
+
+        .sec1 h3 {
+            transition: transform 0.3s ease;
+            margin-left: 0;
+            /* initial spacing */
+        }
+
+        .container1:hover .sec1 h3,
+        .container3:hover .sec1 h3 {
+            transform: translateX(30px);
+            /* text moves smoothly */
+        }
+
+        .sec2 svg {
+            height: 35px;
+            width: 35px;
+            filter: invert(100);
+            border-radius: 150px;
+            stroke-linecap: round;
+        }
+
+        .arrow {
+            fill: #111;
+        }
+
+        /* collapse hidden by default */
+        .expand-button .collapse-icon {
+            display: none;
+        }
+
+        /* when expanded → swap icons */
+        .container1.expanded .expand-button .expand-icon {
+            display: none;
+        }
+
+        .container1.expanded .expand-button .collapse-icon {
+            display: inline-block;
+        }
+
+        /* when expanded → swap icons */
+        .container3.expanded .expand-button .expand-icon {
+            display: none;
+        }
+
+        .container3.expanded .expand-button .collapse-icon {
+            display: inline-block;
+        }
+
+        .sec2 .create-button:hover {
+            background-color: #4b4b4b;
+        }
+
+        .sec2 svg:hover {
+            background-color: #c9c9c9;
+        }
+
+        .sec2 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 0;
+            border-radius: 150px;
+            padding: 6px;
+            cursor: pointer;
+            color: #b3b3b3;
+            /* default color */
+        }
+
+        .search-btn:hover {
+            color: #ffffff;
+            background-color: #4b4b4b;
+        }
+
+        #playlist-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .playlist-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            background: #333;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .playlist-item:hover {
+            background: #444;
+        }
+
+        /* 🎵 PLAYLIST CONTAINER AREA */
+        /* Playlist Container */
+        #playlist-container {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 16px;
+            padding: 16px;
+            width: 100%;
+            max-height: 60vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #1db954 #111;
+        }
+
+        /* Each Playlist */
+        .user-playlist {
+            background: #1e1e1e;
+            border-radius: 8px;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-playlist:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Header (cover + name) */
+        .pl-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 7px 12px;
+        }
+
+        .pl-cover {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 1px;
+            width: 50px;
+            height: 50px;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+
+        .pl-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pl-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        /* Songs inside playlist (hidden by default) */
+        .playlist-songs {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            padding: 0 16px;
+        }
+
+        /* When playlist is active (expanded) */
+        .user-playlist.active .playlist-songs {
+            max-height: 500px;
+            opacity: 1;
+            padding-bottom: 12px;
+        }
+
+        /* Each Song */
+        .playlist-song {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+            padding: 4px 6px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .playlist-song button {
+            background: none;
+            border: none;
+            color: #1db954;
+            cursor: pointer;
+        }
+
+        .playlist-song:last-child {
+            border-bottom: none;
+        }
+
+        /* ===== SHRINKED STATE STYLES ===== */
+        .container1.shrinked .user-playlist {
+            flex-direction: column;
+            position: relative;
+            top: 65px;
+            left: 5px;
+        }
+
+        .container1.shrinked .user-playlist .pl-name {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Tooltip Styling */
+        .user-playlist:hover::after {
+            content: attr(data-title);
+            position: absolute;
+            left: 60px;
+            background: #000;
+            padding: 4px 8px;
+            color: white;
+            font-size: 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+            opacity: 1;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .container1.shrinked .user-playlist:hover::after {
+            background: #111;
+        }
+
+
+        .container2 {
+            width: 56vw;
+            position: relative;
+            background: linear-gradient(180deg, rgb(39, 38, 38), rgb(0, 0, 0));
+            height: 73.7vh;
+            border-radius: 7px;
+            color: white;
+            overflow-y: scroll;
+        }
+
+        .container2::-webkit-scrollbar,
+        .container1::-webkit-scrollbar,
+        .container3::-webkit-scrollbar {
+            display: none;
+            /* Chrome, Safari */
+        }
+
+        .container2 h2 {
+            display: flex;
+            justify-content: left;
+            padding-left: 10px;
+        }
+
+        .songbox {
+            display: flex;
+            flex-direction: row;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
+        .songbox::-webkit-scrollbar {
+            display: none;
+            /* Chrome, Safari */
+        }
+
+        .songs img {
+            width: 150px;
+            height: 150px;
+            border-radius: 5px;
+            display: flex;
+        }
+
+        .songs {
+            background-color: rgba(255, 192, 203, 0);
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .songs a {
+            text-decoration-line: none;
+        }
+
+        .songname {
+            font-size: large;
+            padding: 1.5px;
+            color: white;
+            justify-self: left;
+        }
+
+        .author {
+            color: rgb(189, 189, 189);
+            max-width: 150px;
+            justify-self: left;
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+        }
+
+        .songbox :hover {
+            background-color: #272727;
+            border: none;
+        }
+
+        .songname:hover {
+            text-decoration: underline;
+        }
+
+        .author:hover {
+            text-decoration: underline;
+        }
+
+        .container2 h2:hover {
+            text-decoration: underline;
+        }
+
+        #artists img {
+            border-radius: 100px;
+        }
+
+        #radio {
+            padding: 1.5px;
+        }
+
+        #radio:hover {
+            text-decoration: none;
+        }
+
+        .songs {
+            position: relative;
+            /* make each song the positioning container */
+        }
+
+        .songs:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+
+        .play-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            bottom: -50px;
+            /* start hidden below */
+            left: 80%;
+            /* center horizontally */
+            transform: translateX(-50%);
+            height: 40px;
+            width: 40px;
+            font-size: 25px;
+            background-color: red;
+            border-radius: 150px;
+            color: black;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            /* allow hover on icon */
+            cursor: pointer;
+        }
+
+        .songs:hover .play-icon {
+            bottom: 50%;
+            /* move to center vertically */
+            transform: translate(-50%, 100%);
+            opacity: 1;
+        }
+
+        .play-icon:hover {
+            transform: translate(-50%, 50%) scale(1.1);
+            /* expand a bit */
+            background-color: #cc0000;
+            /* dimmer red shade */
+        }
+
+        .scroll-wrapper {
+            position: relative;
+            width: 97%;
+            /* adjust */
+            margin: auto;
+        }
+
+        /* round scroll buttons */
+        .scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            z-index: 10;
+            transition: opacity 0.3s ease, background 0.2s ease;
+            opacity: 0;
+            /* hidden by default */
+            pointer-events: none;
+            /* not clickable when hidden */
+        }
+
+        .scroll-btn.left {
+            left: -20px;
+        }
+
+        .scroll-btn.right {
+            right: -20px;
+        }
+
+        .scroll-btn:hover {
+            background: rgba(0, 0, 0, 1);
+        }
+
+        /* Show buttons only when hovering wrapper */
+        .scroll-wrapper:hover .scroll-btn {
+            opacity: 1;
+            pointer-events: auto;
+            /* make them clickable again */
+        }
+
+
+        .playlist-overlay {
+            display: none;
+            position: fixed;
+            top: 76px;
+            left: 0;
+            width: 0;
+            height: 73.7vh;
+            background: #121212;
+            color: white;
+            padding: 50px 80px;
+            box-sizing: border-box;
+            z-index: 11000;
+            overflow-y: scroll;
+            overscroll-behavior: contain;
+            border-radius: 7px;
+        }
+
+        .playlist-overlay::-webkit-scrollbar {
+            display: none;
+        }
+
+        .playlist-overlay.active {
+            display: block;
+        }
+
+
+        .overlay-content {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .overlay-header {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        /* Multi-cover grid for playlist header */
+        .overlay-cover-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 3px;
+            width: 230px;
+            height: 230px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .overlay-cover-grid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .overlay-info {
+            flex-grow: 1;
+        }
+
+        #overlay-name {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        #overlay-count {
+            font-size: 1rem;
+            color: #b3b3b3;
+        }
+
+        #overlay-songs {
+            margin-top: 20px;
+        }
+
+        .song-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 10px;
+            border-bottom: 1px solid #2a2a2a;
+            transition: background 0.2s;
+        }
+
+        .song-item:hover {
+            background: rgba(255, 255, 255, 0.114);
+        }
+
+        .song-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .song-index {
+            color: #b3b3b3;
+            width: 25px;
+            text-align: right;
+        }
+
+        .song-thumb {
+            width: 45px;
+            height: 45px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .song-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .song-title {
+            color: white;
+            font-size: 1rem;
+        }
+
+        .song-artist {
+            font-size: 0.85rem;
+            color: #a0a0a0;
+        }
+
+        .song-actions button {
+            background: none;
+            border: none;
+            color: #1db954;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 10px;
+            transition: color 0.2s;
+        }
+
+        .song-actions button:hover {
+            color: #1ed760;
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeInOverlay {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+
+
+
+        /* Overlay base (no blur) */
+        .search-overlay {
+            position: fixed;
+            top: 76px;
+            left: calc(clamp(190px, 22vw, 310px) + 10px);
+            width: calc(100vw - clamp(190px, 22vw, 310px) - clamp(230px, 20vw, 360px) - 30px);
+            height: 73.7vh;
+            z-index: 15000;
+            display: none;
+            background: #1b1b1b;
+            border-radius: 7px;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            align-items: flex-start;
+            justify-content: center;
+            transition: opacity 0.25s ease;
+        }
+
+        .search-overlay.active {
+            display: flex;
+            z-index: 15000;
+            animation: fadeIn 220ms ease both;
+        }
+
+        .search-overlay::-webkit-scrollbar {
+            display: none;
+            /* Chrome, Safari */
+        }
+
+        .search-overlay.active {
+            z-index: 12000 !important;
+            display: flex;
+            animation: fadeIn 220ms ease both;
+        }
+
+        /* When expansion happens — push overlay under but visible */
+        .search-overlay.fade-under {
+            z-index: 9000 !important;
+            opacity: 0.8;
+            /* faintly visible, tweak if needed */
+        }
+
+        /* Smooth normalization on search-overlay open */
+        .container1 {
+            transition:
+                flex-basis 0.4s cubic-bezier(.22, 1, .36, 1),
+                width 0.4s cubic-bezier(.22, 1, .36, 1),
+                min-width 0.4s ease,
+                opacity 0.25s ease-in-out;
+        }
+
+        .container2,
+        .container3 {
+            transition: width 0.35s ease-in-out, opacity 0.25s ease-in-out;
+        }
+
+        .search-overlay.active~.container .container1 {
+            width: 22vw !important;
+        }
+
+        .search-overlay.active~.container .container2 {
+            width: 56vw !important;
+        }
+
+        .search-overlay.active~.container .container3 {
+            width: 20vw !important;
+        }
+
+        /* ---------- SEARCH-OVERLAY INTERACTIVITY FIX (append to your CSS) ---------- */
+
+        /* ensure overlay and its children are interactive */
+        .search-overlay,
+        #search-overlay,
+        .container2-overlay {
+            pointer-events: auto !important;
+        }
+
+        /* make sure result rows and their buttons accept pointer events */
+        .search-results .result-row,
+        .search-results .search-result-item,
+        .result-row .result-actions,
+        .result-more,
+        .result-playlist-popup {
+            pointer-events: auto !important;
+        }
+
+        /* ensure popup root sits above overlay and is clickable */
+        #playlist-popup-root {
+            z-index: 33000 !important;
+            pointer-events: auto !important;
+        }
+
+        /* if you render inline per-row popups inside overlay, make sure they are above other overlay children */
+        .result-playlist-popup {
+            z-index: 32000 !important;
+            pointer-events: auto !important;
+        }
+
+        /* play-icon hover helpers (keeps CSS hover behavior intact) */
+        .search-overlay .play-icon,
+        #search-overlay .play-icon {
+            pointer-events: none;
+            /* icon should not block clicks */
+            transition: all 160ms ease;
+        }
+
+        /* ensure result hover styles still work */
+        .search-results .result-row:hover,
+        .search-results .search-result-item:hover {
+            transform: translateY(-2px);
+        }
+
+        /* small safety: if some element had pointer-events:none applied earlier, ensure the row's children get interaction */
+        .search-results .result-row>* {
+            pointer-events: auto !important;
+        }
+
+        body.force-search-top .search-overlay {
+            z-index: 15000 !important;
+        }
+
+        body.force-search-top .playlist-overlay {
+            z-index: 14000 !important;
+        }
+
+        /* tiny helper to fully hide playlist element during suppression (prevents flicker) */
+        .playlist-overlay.suppress {
+            visibility: hidden !important;
+            pointer-events: none !important;
+            /* keep it off the composite layer too */
+            transform: translateZ(0);
+        }
+
+
+
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .search-overlay-inner {
+            width: 92%;
+            max-width: 1100px;
+            margin: 48px 0;
+            color: #fff;
+        }
+
+        /* header */
+        .search-overlay-header {
+            display: flex;
+            justify-content: right;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        #closeSearchOverlay {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* grid */
+        .search-overlay-grid {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 22px;
+            align-items: start;
+        }
+
+        /* top result */
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: #fff;
+        }
+
+        .top-result-card {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            background: #242424;
+            padding: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            transition: background .16s, transform .16s;
+            min-height: 120px;
+        }
+
+        .top-result-card:hover {
+            background: #2e2e2e;
+        }
+
+        .top-thumb-wrap {
+            position: relative;
+            width: 96px;
+            height: 96px;
+            min-width: 96px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #111;
+        }
+
+        .top-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* play icon (hover center) */
+        .top-result-card .play-icon {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            left: 90%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border-radius: 50%;
+            background: rgb(255, 0, 0);
+            color: black;
+            opacity: 0;
+            transition: all 160ms ease;
+            z-index: 12000;
+        }
+
+        .top-result-card:hover .play-icon,
+        .top-result-card.active .play-icon {
+            bottom: 40%;
+            transform: translate(-50%, 100%);
+            opacity: 1;
+            z-index: 14000;
+        }
+
+        .top-meta {
+            flex: 1;
+        }
+
+        .top-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .top-artist {
+            color: #cfcfcf;
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .top-meta-small {
+            color: #9b9b9b;
+            font-size: 0.85rem;
+        }
+
+        /* results list */
+        .results-list-block {
+            min-height: 120px;
+        }
+
+        #search-results {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background .12s, transform .12s;
+            background: transparent;
+        }
+
+        .search-result-item:hover {
+            background: #2e2e2e;
+        }
+
+        .result-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 84px;
+        }
+
+        .result-thumb {
+            width: 46px;
+            height: 46px;
+            border-radius: 6px;
+            object-fit: cover;
+            background: #222;
+        }
+
+        .result-details {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #fff;
+            font-size: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .result-artist {
+            font-size: 0.85rem;
+            color: #bdbdbd;
+            margin-top: 4px;
+        }
+
+        .result-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 8px;
+            position: relative;
+        }
+
+        .result-more {
+            background: transparent;
+            border: none;
+            color: #bbb;
+            font-size: 18px;
+            padding: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .result-more:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
+        }
+
+        /* small popup */
+        .playlist-popup {
+            background: #111;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 8px;
+            border-radius: 8px;
+            min-width: 180px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .playlist-popup .pl-item {
+            padding: 6px 8px;
+            cursor: pointer;
+            color: #eee;
+            border-radius: 6px;
+        }
+
+        .playlist-popup .pl-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
+        }
+
+        /* empty */
+        .search-empty {
+            color: #999;
+            padding: 16px;
+            text-align: center;
+        }
+
+        /* responsive */
+        @media (max-width:980px) {
+            .search-overlay-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-list-block {
+                order: 2;
+            }
+
+            .top-result-block {
+                order: 1;
+                margin-bottom: 12px;
+            }
+        }
+
+
+
+
+        .container3 {
+            width: 20vw;
+            height: 73.7vh;
+            border-radius: 7px;
+            position: relative;
+            cursor: pointer;
+            overflow-y: scroll;
+            transition: width 0.4s ease;
+            flex: none;
+            /* don’t shrink in flex layouts */
+            min-width: 0;
+            /* reset flexbox min constraints */
+        }
+
+        .container3.expanded {
+            width: 99vw !important;
+            max-width: 100vw !important;
+            position: fixed;
+            /* take it out of parent flow */
+            right: 1vw;
+            /* align it from left edge */
+            top: 76px;
+            /* adjust as needed */
+            z-index: 14000;
+            /* keep it above other content */
+        }
+
+        .container3.expanded .mid {
+            display: none;
+        }
+
+        .container3.expanded .video-bg {
+            height: 73.7vh !important;
+            position: fixed;
+            width: 100vw;
+            max-width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container3 .sec2 {
+            align-content: center;
+            position: relative;
+        }
+
+        .container3 h3 {
+            color: white;
+        }
+
+        .container3 .sec2 svg {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .container3.shrinked {
+            width: 0vw !important;
+        }
+
+        .container3 .sec2 .more-button {
+            position: absolute;
+            top: 50%;
+            right: 40px;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .more-button {
+            border: none;
+            background-color: transparent;
+            border-radius: 50%;
+        }
+
+        .container3:hover .sec2 svg,
+        .container3:hover .sec2 .more-button {
+            opacity: 1;
+        }
+
+        .container3 .top1 {
+            gap: 170px;
+        }
+
+        .video-bg {
+            position: relative;
+            width: 100%;
+            height: 66vh;
+            overflow: hidden;
+            border-radius: 7px 7px 0 0;
+        }
+
+        .video-bg video {
+            position: absolute;
+            top: 90%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            transform: translate(-50%, -50%);
+            z-index: -3;
+            /* push behind everything */
+        }
+
+        .video-bg::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* cover full height for a smoother mix */
+            background: linear-gradient(to bottom,
+                    rgba(39, 38, 38, 0) 0%,
+                    /* fully transparent at the top */
+                    rgba(39, 38, 38, 0.3) 40%,
+                    /* start blending */
+                    rgba(39, 38, 38, 0.6) 70%,
+                    /* stronger mix */
+                    rgba(30, 30, 30, 1) 100%
+                    /* fully solid at the bottom */
+                );
+            z-index: -1;
+        }
+
+        .cover-backdrop {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            z-index: 0;
+
+        }
+
+        .expanded-cover {
+            position: absolute;
+            top: 12%;
+            left: 39%;
+            transform: translate(-50%, -50%);
+            width: 25vw;
+            height: 25vw;
+            object-fit: cover;
+            border-radius: 12px;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            z-index: 50;
+            /* Must be above blur background */
+            display: none;
+            /* will be toggled by JS */
+        }
+
+        .video-bg.expanded #expandedCover {
+            display: block !important;
+        }
+
+        /* Show when expanded */
+        .video-bg.expanded .cover-backdrop,
+        .video-bg.expanded #expandedCover {
+            opacity: 1;
+            display: block;
+            transform: scale(1);
+        }
+
+
+        .mid {
+            color: white;
+            background: linear-gradient(to bottom,
+                    rgba(30, 30, 30, 0) 0%,
+                    rgba(30, 30, 30, 0.25) 25%,
+                    rgba(30, 30, 30, 0.55) 60%,
+                    rgba(30, 30, 30, 0.8) 85%,
+                    rgba(30, 30, 30, 1) 100%);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(6px);
+
+            width: 100%;
+            height: auto;
+            min-height: 0;
+            padding: 16px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            position: relative;
+            top: 0;
+            border-radius: 12px;
+        }
+
+
+
+        .about-artist {
+            width: 100%;
+            border-radius: 7px;
+            background: #2a2a2a;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            margin-top: 15px;
+        }
+
+        .about-artist img {
+            height: 25vh;
+            width: 100%;
+            object-fit: cover;
+            object-position: top;
+            border-radius: 7px 7px 0 0;
+        }
+
+        .artist-details {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .artist-details h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .listeners {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .listeners button {
+            background: #1db954;
+            /* Spotify green */
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .listeners button:hover {
+            background: #1ed760;
+        }
+
+        .artist-details p {
+            font-size: 0.85rem;
+            line-height: 1.3;
+            opacity: 0.9;
+        }
+
+        .mid h2,
+        .mid h4 {
+            margin: 0;
+            padding: 0;
+            line-height: 1.2;
+        }
+
+        /* Song name */
+        .mid h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        /* Author name */
+        .mid h4 {
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #b3b3b3;
+        }
+
+        .mid h4:hover {
+            text-decoration: underline;
+        }
+
+        .mid h2:hover {
+            text-decoration: underline;
+        }
+
+
+
+
+        :root {
+            --bg: #0f1724;
+            --card: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            --accent: #6ee7b7;
+            --muted: #98a0ad;
+            --glass: rgba(255, 255, 255, 0.04);
+            --glass-2: rgba(255, 255, 255, 0.02);
+            --shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+            --radius: 14px;
+        }
+
+        .player {
+            position: fixed;
+            justify-self: center;
+            bottom: 0;
+            width: 100%;
+            height: 15vh;
+            /* fixed clean height */
+            background: #181818;
+            /* dark background like Spotify */
+            border-top: 1px solid #282828;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
+
+        /* Left: info + seek */
+        .meta {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .track {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .cover {
+            width: 72px;
+            height: 72px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .info {
+            min-width: 0;
+        }
+
+        .title2 {
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 0.1px;
+            color: white;
+        }
+
+        .artist2 {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* Seek bar */
+        .seek-wrap {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            width: 70vh;
+        }
+
+        .time {
+            font-size: 13px;
+            color: var(--muted);
+            width: 44px;
+            text-align: center;
+        }
+
+        .seek {
+            --h: 10px;
+            position: relative;
+            height: var(--h);
+            flex: 1;
+            min-width: 120px;
+
+        }
+
+        .seek input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: var(--h);
+            background: transparent;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+
+        }
+
+        /* track */
+        .seek .bar {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 82%;
+            transform: translateY(-50%);
+            height: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 999px;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .seek .progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, rgba(110, 231, 183, 0.14), rgba(110, 231, 183, 0.35));
+            box-shadow: 0 4px 14px rgba(110, 231, 183, 0.06) inset;
+            border-radius: 999px;
+            transition: width 120ms linear;
+        }
+
+        .seek input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.5);
+            transform: translateY(-3px);
+            transition: transform 140ms ease;
+        }
+
+        .seek input[type="range"]:active::-webkit-slider-thumb {
+            transform: translateY(-3px) scale(1.08);
+        }
+
+        .seek input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+        }
+
+        /* Right: controls */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
+            display: inline-grid;
+            place-items: center;
+            cursor: pointer;
+            transition: all 160ms ease;
+            color: var(--muted);
+            outline: none;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-4px);
+            background: var(--glass);
+            color: white;
+            box-shadow: 0 8px 20px rgba(2, 6, 23, 0.45);
+        }
+
+        .icon-btn:active {
+            transform: translateY(-1px) scale(.98);
+        }
+
+        .icon-btn[data-state="on"] {
+            background: linear-gradient(180deg, rgba(110, 231, 183, 0.12), rgba(110, 231, 183, 0.06));
+            color: var(--accent);
+            box-shadow: 0 8px 30px rgba(110, 231, 183, 0.06);
+        }
+
+        /* play bigger */
+        .play {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #ffffff, #f3f9f6);
+            color: #06202a;
+            display: grid;
+            place-items: center;
+            box-shadow: 0 14px 44px rgba(2, 6, 23, 0.7), 0 2px 0 rgba(255, 255, 255, 0.03) inset;
+            transition: transform 160ms ease, box-shadow 160ms ease;
+        }
+
+        .play:hover {
+            transform: scale(1.06);
+        }
+
+        .play:active {
+            transform: scale(.98);
+        }
+
+        /* extra small controls area */
+        .extra {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* responsive */
+        @media (max-width:720px) {
+            .player {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                padding: 14px;
+            }
+
+            .controls {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        .playlist-modal {
+            display: none;
+            /* hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 20000;
+        }
+
+        .playlist-modal-content {
+            background: #1e1e1e;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .playlist-modal-content input {
+            width: 90%;
+            padding: 8px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .playlist-modal-content button {
+            background: #1db954;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .playlist-modal-content button:hover {
+            background: #1ed760;
+        }
+
+        .close {
+            float: right;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        #playlist-modal {
+            display: none;
+            /* hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 14000;
+        }
+
+        #playlist-modal.active {
+            display: flex;
+            /* visible when active */
+        }
+    </style>
+    <link rel="stylesheet" href="rkd-responsive.css">
+</head>
+
+<body>
+    <header>
+        <nav class="outer">
+            <div class="nav">RKD</div>
+            <div class="serch">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                    aria-hidden="true">
+                    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="6" />
+                        <path d="M21 21l-4.35-4.35" />
+                    </g>
+                </svg>
+                <input type="search" placeholder="What do you want to play?">
+            </div>
+
+
+            <div class="list">
+                <ul>
+                    <li>Premium</li>
+                    <li>Support</li>
+                    <li>Download</li>
+                    <li>|</li>
+                    <li>Install App</li>
+                    <li>Sign Up</li>
+                    <li>Log In</li>
+                </ul>
+            </div>
+
+        </nav>
+
+    </header>
+    <div class="container">
+        <div class="left-wrapper">
+            <div class="container1" id="panel1">
+                <div class="top1">
+                    <div class="sec1">
+                        <button class="showup shrink-button" data-tooltip="Collapse Your Library" title="Collapse Your Library" id="shrinkBtn1">
+                            <svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <!-- outer rounded square -->
+                                <rect x="6" y="6" width="88" height="88" rx="8" ry="8" fill="none" stroke="#bfbfbf"
+                                    stroke-width="6" stroke-linejoin="round" />
+                                <!-- vertical divider panel -->
+                                <rect x="20" y="18" width="16" height="64" rx="2" fill="none" stroke="#bfbfbf"
+                                    stroke-width="6" stroke-linejoin="round" />
+                                <!-- left chevron -->
+                                <path d="M66 32 L50 50 L66 68" fill="none" stroke="#bfbfbf" stroke-width="6"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+
+                        <h3 class="showup" data-tooltip="Collapse Your Library">Your Library</h3>
+                    </div>
+
+                    <div class="sec2">
+                        <button class="create-button showup" id="createPlaylistBtn"
+                            data-tooltip="Create a playlist,folder or a jam">+Create</button>
+                        <button class="showup expand-button" data-tooltip="Expand Your Library" id="expandBtn1">
+                            <!-- expand icon -->
+                            <svg class="expand-icon" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"
+                                aria-label="Expand arrows mirrored">
+                                <defs>
+                                    <g id="arrow">
+                                        <rect x="0" y="-4" width="45" height="8" rx="4" class="arrow" />
+                                        <polygon points="45,0 30,-15 30,15" class="arrow" />
+                                    </g>
+                                </defs>
+                                <g transform="translate(80 80) rotate(135)">
+                                    <use href="#arrow" />
+                                </g>
+                                <g transform="translate(85 75) rotate(-45)">
+                                    <use href="#arrow" />
+                                </g>
+                            </svg>
+
+                            <!-- collapse icon -->
+                            <svg class="collapse-icon" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"
+                                aria-label="Collapse arrows mirrored">
+                                <defs>
+                                    <g id="arrow">
+                                        <rect x="0" y="-4" width="45" height="8" rx="4" class="arrow" />
+                                        <polygon points="45,0 30,-15 30,15" class="arrow" />
+                                    </g>
+                                </defs>
+                                <g transform="translate(115 45) rotate(135)">
+                                    <use href="#arrow" />
+                                </g>
+                                <g transform="translate(45 115) rotate(-45)">
+                                    <use href="#arrow" />
+                                </g>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <button class="search-btn" aria-label="Search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" focusable="false"
+                        aria-hidden="true">
+                        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="6" />
+                            <path d="M21 21l-4.35-4.35" />
+                        </g>
+                    </svg>
+                </button>
+                <div id="playlistContainer"></div>
+                <div id="playlistSongsContainer"></div>
+            </div>
+            <div class="container2">
+                <h2>Trending Songs</h2>
+                <div class="scroll-wrapper">
+                    <button class="scroll-btn left" aria-label="Scroll left">
+                        <span>&#10094;</span> <!-- left arrow -->
+                    </button>
+                    <div class="songbox">
+                        <div class="songs" data-src="For_A_Reason_1.mp3" data-title="For A Reason"
+                            data-artist="Karan Aujla" data-video="for a reason.mp4" data-playlist="Trending Songs"
+                            data-cover="https://images.genius.com/fdc4682999a762f4e6d0049521b368b3.1000x1000x1.png">
+                            <img src="https://images.genius.com/fdc4682999a762f4e6d0049521b368b3.1000x1000x1.png"
+                                alt="for a reason">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                For A Reason
+                            </div>
+                            <div class="author">
+                                Karan Aujla
+                            </div>
+                            <button class="add-btn">+</button>
+                        </div>
+                        <div class=" songs" data-src="Lover_1.mp3" data-title="Lover" data-artist="Diljit Dosanjh"
+                            data-video="lover.mp4" data-playlist="Trending Songs"
+                            data-cover="https://c.saavncdn.com/209/MoonChild-Era-Punjabi-2021-20240715073449-500x500.jpg">
+                            <img src="https://c.saavncdn.com/209/MoonChild-Era-Punjabi-2021-20240715073449-500x500.jpg"
+                                alt="lover">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                Lover
+                            </div>
+                            <div class="author">
+                                Diljit Dosanjh
+                            </div>
+                            <button class="add-btn">+</button>
+                        </div>
+                        <div class="songs" data-src="BOYFRIEND.mp3" data-title="BOYFRIEND" data-artist="Karan Aujla"
+                            data-video="BOYFRIEND.mp4" data-playlist="Trending Songs"
+                            data-cover="https://images.genius.com/fdc4682999a762f4e6d0049521b368b3.1000x1000x1.png">
+                            <img src="https://images.genius.com/fdc4682999a762f4e6d0049521b368b3.1000x1000x1.png"
+                                alt="BOYFRIEND">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                BOYFRIEND
+                            </div>
+                            <div class="author">
+                                Karan Aujla
+                            </div>
+                            <button class="add-btn">+</button>
+                        </div>
+                        <div class=" songs" data-src="Admirin_You_1.mp3" data-title="Admiring You"
+                            data-artist="Karan Aujla" data-video="admiring you.mp4" data-playlist="Trending Songs"
+                            data-cover="https://i.scdn.co/image/ab67616d0000b2734c54db9dbdd736413e294daa">
+                            <img src="https://i.scdn.co/image/ab67616d0000b2734c54db9dbdd736413e294daa" alt="lover">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                Admiring You
+                            </div>
+                            <div class="author">
+                                Karan Aujla
+                            </div>
+                            <button class="add-btn">+</button>
+                        </div>
+                        <div class="songs" data-src="Wavy.mp3" data-title="Wavy" data-artist="Karan Aujla"
+                            data-video="WAVY.mp4" data-playlist="Trending Songs"
+                            data-cover="https://c.saavncdn.com/178/Wavy-Punjabi-2024-20250523044332-500x500.jpg">
+                            <img src="https://c.saavncdn.com/178/Wavy-Punjabi-2024-20250523044332-500x500.jpg"
+                                alt="Wavy">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                Wavy
+                            </div>
+                            <div class="author">
+                                Karan Aujla
+                            </div>
+                            <button class="add-btn">+</button>
+                        </div>
+                        <div class="songs" data-src="Take It Easy.mp3" data-title="Take It Easy"
+                            data-artist="Karan Aujla" data-video="Take It Easy.mp4" data-playlist="Trending Songs"
+                            data-cover="https://c.saavncdn.com/552/Four-You-Punjabi-2023-20230130150304-500x500.jpg">
+                            <img src="https://c.saavncdn.com/552/Four-You-Punjabi-2023-20230130150304-500x500.jpg"
+                                alt="Take It Easy">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                Take It Easy
+                            </div>
+                            <div class="author">
+                                Karan Aujla
+                            </div>
+                            <button class="add-btn">+</button>
+                        </div>
+                        <div class="songs" data-src="52 Bars.mp3" data-title="52 Bars" data-artist="Karan Aujla"
+                            data-video="52 Bars.mp4" data-playlist="Trending Songs"
+                            data-cover="https://c.saavncdn.com/552/Four-You-Punjabi-2023-20230130150304-500x500.jpg">
+                            <img src="https://c.saavncdn.com/552/Four-You-Punjabi-2023-20230130150304-500x500.jpg"
+                                alt="52 Bars">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                52 Bars
+                            </div>
+                            <div class="author">
+                                Karan Aujla
+                            </div>
+                            <button class="add-btn">+</button>
+                        </div>
+                        <div class="songs" data-src="Winning Speech.mp3" data-title="Winning Speech"
+                            data-artist="Karan Aujla" data-video="winning speech.mp4" data-playlist="Trending Songs"
+                            data-cover="https://c.saavncdn.com/089/Winning-Speech-Punjabi-2024-20250321230248-500x500.jpg">
+                            <img src="https://c.saavncdn.com/089/Winning-Speech-Punjabi-2024-20250321230248-500x500.jpg"
+                                alt="Winning Speech">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                Winning Speech
+                            </div>
+                            <div class="author">
+                                Karan Aujla
+                            </div>
+                            <button class="add-btn">+</button>
+                        </div>
+                        <div class="songs" data-src="On Top 2.mp3" data-title="On Top 2" data-artist="Karan Aujla"
+                            data-video="on top 2.mp4" data-playlist="Trending Songs"
+                            data-cover="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/fb/d2/2d/fbd22dc2-df8b-2bc8-e84f-a1b74d5bf8ae/5063483864168_cover.jpg/3000x3000bb.jpg">
+                            <img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/fb/d2/2d/fbd22dc2-df8b-2bc8-e84f-a1b74d5bf8ae/5063483864168_cover.jpg/3000x3000bb.jpg"
+                                alt="On Top 2">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                On Top 2
+                            </div>
+                            <div class="author">
+                                Karan Aujla
+                            </div>
+                            <button class="add-btn">+</button>
+                        </div>
+                        <div class="songs" data-src="IDK How.mp3" data-title="IDK How" data-artist="Karan Aujla"
+                            data-video="IDK how.mp4" data-playlist="Trending Songs"
+                            data-cover="https://images.genius.com/1ed879c22950f27676767dc6d069d7f0.1000x1000x1.jpg">
+                            <img src="https://images.genius.com/1ed879c22950f27676767dc6d069d7f0.1000x1000x1.jpg"
+                                alt="IDK How">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                IDK How
+                            </div>
+                            <div class="author">
+                                Karan Aujla
+                            </div>
+                            <button class="add-btn">+</button>
+                        </div>
+                        <div class="songs" data-src="Tauba Tauba.mp3" data-title="Tauba Tauba" data-artist="Karan Aujla"
+                            data-video="tauba tauba.mp4" data-playlist="Trending Songs"
+                            data-cover="https://images.genius.com/bc27299c050b02ba379f03f9727eded0.1000x1000x1.png">
+                            <img src="https://images.genius.com/bc27299c050b02ba379f03f9727eded0.1000x1000x1.png"
+                                alt="Tauba Tauba">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                Tauba Tauba
+                            </div>
+                            <div class="author">
+                                Karan Aujla
+                            </div>
+                            <button class="add-btn">+</button>
+                        </div>
+                        <div class="songs" data-src="Sifar Safar.mp3" data-title="Sifar Safar" data-artist="Karan Aujla"
+                            data-video="Sifar Safar.mp4" data-playlist="Trending Songs"
+                            data-cover="https://i1.sndcdn.com/artworks-emOMB0d5rJPX7UeG-VJZZGw-t500x500.jpg">
+                            <img src="https://i1.sndcdn.com/artworks-emOMB0d5rJPX7UeG-VJZZGw-t500x500.jpg"
+                                alt="Sifar Safar">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                Sifar Safar
+                            </div>
+                            <div class="author">
+                                Karan Aujla
+                            </div>
+                            <button class="add-btn">+</button>
+                        </div>
+                        <!-- add more songs here -->
+                    </div>
+                    <button class="scroll-btn right" aria-label="Scroll right">
+                        <span>&#10095;</span> <!-- right arrow -->
+                    </button>
+                </div>
+
+                <h2>Popular Artists</h2>
+                <div class="songbox">
+                    <div class="songs" id="artists">
+                        <a href="">
+                            <img src="https://a10.gaanacdn.com/gn_img/artists/Dk9KNk23Bx/k9KNqJJbBx/size_m_1739172212.jpg"
+                                alt="arijit singh">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                Arijit Singh
+                            </div>
+                            <div class="author">
+                                Artist
+                            </div>
+                        </a>
+                    </div>
+                    <!-- add here artists -->
+                </div>
+                <h2>Popular albums and singles</h2>
+                <div class="songbox">
+                    <div class="songs">
+                        <a href="">
+                            <img src="https://i.scdn.co/image/ab67616d0000b2734c54db9dbdd736413e294daa"
+                                alt="making memories">
+                            <div class="play-icon">▶</div>
+                            <div class="songname">
+                                Making Memories
+                            </div>
+                            <div class="author">
+                                Karan Aujla
+                            </div>
+                        </a>
+                    </div>
+                    <!-- add more albums here -->
+                </div>
+                <h2>Popular radio</h2>
+                <div class="songbox">
+                    <div class="songs">
+                        <a href="">
+                            <img src="https://pickasso.spotifycdn.com/image/ab67c0de0000deef/dt/v1/img/radio/artist/2FKWNmZWDBZR4dE5KX4plR/en"
+                                alt="radio1">
+                            <div class="play-icon">▶</div>
+                            <div class="author" id="radio">
+                                With Shubh,Karan Aujla,AP Dhillon and more
+                            </div>
+                        </a>
+                    </div>
+                    <!-- add more radios here -->
+                </div>
+                <h2>Featured Charts</h2>
+                <div class="songbox">
+                    <div class="songs">
+                        <a href="">
+                            <img src="https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da848af74f0c3a3fe4a49a7d8487"
+                                alt="charts">
+                            <div class="play-icon">▶</div>
+                            <div class="author" id="radio">
+                                Your weekly update of the most played tracks...
+                            </div>
+                        </a>
+                    </div>
+                    <!-- add more charts here -->
+                </div>
+                <div id="playlist-overlay" class="playlist-overlay">
+                    <div class="overlay-content">
+                        <div class="overlay-header">
+                            <div id="overlay-cover" class="overlay-cover-grid">
+                                <!-- 4 small images will be inserted dynamically -->
+                            </div>
+                            <div class="overlay-info">
+                                <div id="overlay-name">Playlist Name</div>
+                                <div id="overlay-count">0 songs</div>
+                            </div>
+                        </div>
+                        <div id="overlay-songs"></div>
+                    </div>
+                </div>
+
+
+                <div id="search-overlay" class="search-overlay" aria-hidden="true" role="dialog"
+                    aria-label="Search results">
+                    <div class="search-overlay-inner" role="document" aria-live="polite">
+                        <div class="search-overlay-header">
+                            <button id="closeSearchOverlay" aria-label="Close search overlay">✕</button>
+                        </div>
+
+                        <div class="search-overlay-grid">
+                            <div class="top-result-block">
+                                <h3 class="section-title">Top result</h3>
+                                <div id="top-result-card" class="top-result-card" role="button" tabindex="0"
+                                    aria-label="Play top result">
+                                    <div class="top-thumb-wrap">
+                                        <img id="topThumb" src="" alt="top cover" class="top-thumb">
+                                    </div>
+                                    <div class="top-meta">
+                                        <div id="topTitle" class="top-title">Title</div>
+                                        <div id="topArtist" class="top-artist">Artist</div>
+                                        <div id="topMetaSmall" class="top-meta-small"></div>
+                                    </div>
+                                    <div class="play-icon">▶</div>
+                                </div>
+                            </div>
+
+                            <div class="results-list-block">
+                                <h3 class="section-title">Songs</h3>
+                                <div id="search-results" class="search-results" role="list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- tiny popup root (re-used) -->
+                <div id="playlist-popup-root" style="position:fixed;z-index:16000;display:none;"></div>
+
+
+
+
+            </div>
+        </div>
+
+        <div class="container3" id="panel2">
+            <div class="video-bg">
+
+                <!-- Cover Blur Backdrop (Initially Hidden) -->
+                <div class="cover-backdrop"></div>
+
+                <!-- Cover Image Holder (Appears on Expand) -->
+                <img id="expandedCover" class="expanded-cover" src="" alt="Cover">
+
+                <!-- all the content of container 3 -->
+                <div class="top1">
+                    <div class="sec1">
+                        <button class="showup shrink-button" data-tooltip="Hide Now PLaying View" id="shrinkBtn2">
+                            <svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <!-- outer rounded square -->
+                                <rect x="6" y="6" width="88" height="88" rx="8" ry="8" fill="none" stroke="#bfbfbf"
+                                    stroke-width="6" stroke-linejoin="round" />
+                                <!-- vertical divider panel -->
+                                <rect x="20" y="18" width="16" height="64" rx="2" fill="none" stroke="#bfbfbf"
+                                    stroke-width="6" stroke-linejoin="round" />
+                                <!-- left chevron -->
+                                <path d="M66 32 L50 50 L66 68" fill="none" stroke="#bfbfbf" stroke-width="6"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                        <h3 class="showup" data-tooltip="Collapse Your Library" id="playlist-name">Aujla</h3>
+                    </div>
+
+                    <div class="sec2">
+                        <button class="showup more-button" data-tooltip="More options for Name">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="5" cy="12" r="1" />
+                                <circle cx="12" cy="12" r="1" />
+                                <circle cx="19" cy="12" r="1" />
+                            </svg>
+                        </button>
+                        <button class="showup expand-button" id="expandBtn2" data-tooltip="Expand Non Playing View">
+                            <!-- expand icon -->
+                            <svg class="expand-icon" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"
+                                aria-label="Expand arrows mirrored">
+                                <defs>
+                                    <g id="arrow">
+                                        <rect x="0" y="-4" width="45" height="8" rx="4" class="arrow" />
+                                        <polygon points="45,0 30,-15 30,15" class="arrow" />
+                                    </g>
+                                </defs>
+                                <g transform="translate(80 80) rotate(135)">
+                                    <use href="#arrow" />
+                                </g>
+                                <g transform="translate(85 75) rotate(-45)">
+                                    <use href="#arrow" />
+                                </g>
+                            </svg>
+
+                            <!-- collapse icon -->
+                            <svg class="collapse-icon" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"
+                                aria-label="Collapse arrows mirrored">
+                                <defs>
+                                    <g id="arrow">
+                                        <rect x="0" y="-4" width="45" height="8" rx="4" class="arrow" />
+                                        <polygon points="45,0 30,-15 30,15" class="arrow" />
+                                    </g>
+                                </defs>
+                                <g transform="translate(115 45) rotate(135)">
+                                    <use href="#arrow" />
+                                </g>
+                                <g transform="translate(45 115) rotate(-45)">
+                                    <use href="#arrow" />
+                                </g>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mid">
+                <h2 id="song-name">For A Reason</h2>
+                <h4 id="author-name">Karan Aujla</h4>
+            </div>
+
+        </div>
+    </div>
+    <div class="player" aria-label="Audio player">
+        <div class="meta">
+            <div class="track">
+                <div class="cover" aria-hidden="true">
+                    <!-- sample cover -->
+                    <img src="https://images.genius.com/fdc4682999a762f4e6d0049521b368b3.1000x1000x1.png"
+                        alt="cover art">
+                </div>
+                <div class="info">
+                    <div class="title2" id="track-title">For A Reason</div>
+                    <div class="artist2" id="track-artist">Karan Aujla</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="seek-wrap" aria-hidden="false">
+            <div class="time" id="current">0:00</div>
+
+            <div class="seek" aria-label="Seek bar">
+                <div class="bar" aria-hidden="true">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <input id="seek" type="range" min="0" max="100" value="0" aria-label="Seek" />
+            </div>
+
+            <div class="time" id="duration">0:00</div>
+        </div>
+
+
+
+        <div class="controls" role="group" aria-label="Playback controls">
+            <div class="buttons" role="toolbar">
+                <button class="icon-btn" id="shuffle" aria-pressed="false" title="Shuffle">
+                    <!-- shuffle icon -->
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M16 3h5v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M21 3l-7.5 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M3 21h5v-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M3 21l7.5-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M8.5 8.5L15.5 15.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                            stroke-linejoin="round" opacity="0.6" />
+                    </svg>
+                </button>
+
+                <button class="icon-btn" id="prev" title="Previous (backward)">
+                    <!-- backward -->
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M11 19V5l-9 7 9 7zM22 19V5l-9 7 9 7z" stroke="currentColor" stroke-width="1.2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+
+                <button class="play" id="play" aria-pressed="false" title="Play / Pause">
+                    <!-- play/pause; replaced by JS -->
+                    <svg id="play-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M5 3v18l15-9L5 3z" fill="currentColor" />
+                    </svg>
+                </button>
+
+                <button class="icon-btn" id="next" title="Next (forward)">
+                    <!-- forward -->
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M13 5v14l9-7-9-7zM2 5v14l9-7L2 5z" stroke="currentColor" stroke-width="1.2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+
+                <button class="icon-btn" id="repeat" aria-pressed="false" title="Repeat">
+                    <!-- repeat -->
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M21 15v4a1 1 0 0 1-1 1h-4" stroke="currentColor" stroke-width="1.4"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M3 9V5a1 1 0 0 1 1-1h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M21 15L15 9M3 9l6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"
+                            stroke-linejoin="round" opacity="0.9" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="extra">
+                <label for="volume" style="display:none">Volume</label>
+                <input id="volume" type="range" min="0" max="1" step="0.01" value="0.9" aria-label="Volume"
+                    style="width:120px;">
+                <div style="width:8px"></div>
+                <div style="font-size:13px;color:var(--muted)">Ready</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden audio element (you can swap src) -->
+    <audio id="audio" preload="metadata" src="For_A_Reason_1.mp3"></audio>
+    <!-- Playlist Creation Modal -->
+    <div id="playlist-modal" class="playlist-modal" role="dialog" aria-modal="true"
+        aria-labelledby="playlist-modal-title">
+        <div class="playlist-modal-content" role="document">
+            <span id="close-modal" class="close" aria-label="Close">&times;</span>
+            <h3 id="playlist-modal-title">Create New Playlist</h3>
+            <form id="playlist-form">
+                <input type="text" id="playlist-name-input" placeholder="Enter playlist name" required />
+                <button type="submit">Create</button>
+            </form>
+        </div>
+    </div>
+    <script src="app.js"></script>
+    <script src="music-api.js"></script>
+    <script src="rkd-enhancements.js"></script>
+
+</body>
+
+</html>
